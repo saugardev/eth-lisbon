@@ -7,7 +7,6 @@ import MobileMenu from './mobile-menu'
 
 import { getCsrfToken, signIn, signOut, useSession } from "next-auth/react";
 import { api } from "~/utils/api";
-import { renderDataURI } from "@codingwithmanny/blockies";
 import { SiweMessage } from "siwe";
 import { useAccount, useConnect, useDisconnect, useSignMessage, useNetwork } from "wagmi";
 import { InjectedConnector } from 'wagmi/connectors/injected';
@@ -131,7 +130,10 @@ const AuthShowcase: React.FC = () => {
   return (
     <div className="flex flex-col items-center justify-center gap-4">
       {sessionData
-        ? <div className='flex items-center'>
+        ? <div className='flex items-center gap-5'>
+          <li>
+            <Link rel="stylesheet" href="/dashboard">Dashboard</Link>
+          </li>
           <li>
             <Link rel="stylesheet" href="/profile">Profile</Link>
           </li>

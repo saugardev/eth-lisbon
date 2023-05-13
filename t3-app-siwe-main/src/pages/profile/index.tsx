@@ -1,21 +1,13 @@
-import { type NextPage } from "next";
-import Head from "next/head";
 import Image from "next/image";
-import { useEffect, useState } from "react";
-import { getCsrfToken, signIn, signOut, useSession } from "next-auth/react";
+import { useState } from "react";
+import { useSession } from "next-auth/react";
 import { api } from "~/utils/api";
 import { renderDataURI } from "@codingwithmanny/blockies";
-// SIWE Integration
-import { SiweMessage } from "siwe";
 import { useAccount, useConnect, useDisconnect, useSignMessage, useNetwork } from "wagmi";
 import { InjectedConnector } from 'wagmi/connectors/injected';
-import Hero from "~/components/hero";
-import Features from "~/components/features";
-import FeaturesBlocks from "~/components/features-blocks";
-import Testimonials from "~/components/testimonials";
-import Newsletter from "~/components/newsletter";
 import Footer from "~/components/footer";
 import Header from "~/components/ui/header";
+import { Card } from "@tremor/react";
 
 export default function UserPage() {
  
@@ -50,7 +42,7 @@ export default function UserPage() {
     <main className="grow">
     <div className="min-h-screen bg-gray-100 py-6 flex flex-col justify-center sm:py-12">
       <div className="relative py-3 sm:max-w-xl sm:mx-auto">
-        <div className="relative px-4 py-10 bg-white shadow-lg sm:rounded-3xl sm:p-20">
+        <Card className="relative px-4 py-10 sm:rounded-3xl sm:p-20">
           <div className="max-w-md mx-auto">
             <div className="flex items-center space-x-5">
               {sessionData?.user?.id ? <Image width={"80"} height={"80"} alt={`${sessionData.user.id}`} className="mx-auto my-4 border-8 border-white/30" src={`${renderDataURI({ seed: sessionData.user.id, size: 10, scale: 8 })}`} /> : null}
@@ -68,7 +60,7 @@ export default function UserPage() {
               <p className="text-lg font-semibold text-gray-900">{user.location}</p>
             </div>
           </div>
-        </div>
+        </Card>
       </div>
     </div>
     </main>

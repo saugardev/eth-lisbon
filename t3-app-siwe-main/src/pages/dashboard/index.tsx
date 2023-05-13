@@ -8,15 +8,19 @@ import TableView from 'src/components/TableView/TableView'
 import { kpis } from 'src/data/kpis'
 import { performance } from 'src/data/performance'
 import { salesPeople } from 'src/data/salesPeople'
+import Footer from '~/components/footer'
+import Header from '~/components/ui/header'
 
 const DashboardPage = () => {
   const [selectedView, setSelectedView] = useState('1')
 
   return (
     <>
-      <main className="bg-slate-50 p-6 sm:p-10">
-        <Title>Dashboard</Title>
-        <Text>Lorem ipsum dolor sit amet, consetetur sadipscing elitr.</Text>
+    <Header/>
+    <main className="grow">
+      <div className="bg-slate-50 sm:p-10">
+        <Title className='mt-10 text-2xl'>Dashboard</Title>
+        <Text>Manage all your proposals from Guvn000r</Text>
 
         <TabList
           defaultValue="1"
@@ -42,7 +46,9 @@ const DashboardPage = () => {
         ) : (
           <TableView salesPeople={salesPeople} />
         )}
-      </main>
+      </div>
+    </main>
+    <Footer />
     </>
   )
 }

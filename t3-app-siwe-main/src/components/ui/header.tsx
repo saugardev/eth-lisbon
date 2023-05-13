@@ -2,10 +2,16 @@
 
 import { useState, useEffect } from 'react'
 
-import Link from 'next/link'
 import Logo from './logo'
-import Dropdown from '@/components/utils/dropdown'
 import MobileMenu from './mobile-menu'
+
+import { getCsrfToken, signIn, signOut, useSession } from "next-auth/react";
+import { api } from "~/utils/api";
+import { renderDataURI } from "@codingwithmanny/blockies";
+import { SiweMessage } from "siwe";
+import { useAccount, useConnect, useDisconnect, useSignMessage, useNetwork } from "wagmi";
+import { InjectedConnector } from 'wagmi/connectors/injected';
+import Link from 'next/link';
 
 export default function Header() {
 
@@ -37,15 +43,7 @@ export default function Header() {
             {/* Desktop sign in links */}
             <ul className="flex grow justify-end flex-wrap items-center">
               <li>
-                <Link href="/signin" className="font-medium text-gray-600 hover:text-gray-900 px-5 py-3 flex items-center transition duration-150 ease-in-out">Sign in</Link>
-              </li>
-              <li>
-                <Link href="/signup" className="btn-sm text-gray-200 bg-gray-900 hover:bg-gray-800 ml-3">
-                  <span>Sign up</span>
-                  <svg className="w-3 h-3 fill-current text-gray-400 shrink-0 ml-2 -mr-1" viewBox="0 0 12 12" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M11.707 5.293L7 .586 5.586 2l3 3H0v2h8.586l-3 3L7 11.414l4.707-4.707a1 1 0 000-1.414z" fillRule="nonzero" />
-                  </svg>
-                </Link>
+                <AuthShowcase></AuthShowcase>
               </li>
             </ul>
 
@@ -58,3 +56,102 @@ export default function Header() {
     </header>
   )
 }
+
+
+// Auth Component
+// ========================================================
+const AuthShowcase: React.FC = () => {
+  // Hooks
+  const { data: sessionData } = useSession();
+  const { data: secretMessage } = api.example.getSecretMessage.useQuery(
+    undefined, // no input
+    { enabled: sessionData?.user !== undefined },
+  );
+  // State
+  const [showConnection, setShowConnection] = useState(false);
+
+  // Wagmi Hooks
+  const { signMessageAsync } = useSignMessage();
+  const { address, isConnected } = useAccount();
+  const { connect } = useConnect({
+    connector: new InjectedConnector(),
+  });
+  const { disconnect } = useDisconnect();
+  const { chain } = useNetwork();
+
+  // Functions
+  /**
+   * Attempts SIWE and establish session
+   */
+  const onClickSignIn = async () => {
+    connect();
+    try {
+      const message = new SiweMessage({
+        domain: window.location.host,
+        address: address,
+        statement: "Sign in with Ethereum to the app.",
+        uri: window.location.origin,
+        version: "1",
+        chainId: chain?.id,
+        // nonce is used from CSRF token
+        nonce: await getCsrfToken(),
+      })
+      const signature = await signMessageAsync({
+        message: message.prepareMessage(),
+      })
+      await signIn("credentials", {
+        message: JSON.stringify(message),
+        redirect: false,
+        signature,
+      });
+    } catch (error) {
+      window.alert(error);
+    }
+  };
+
+f  /**
+   * Sign user out
+   */
+  const onClickSignOut = async () => {
+    disconnect();
+    await signOut();
+  };
+
+  // Hooks
+  /**
+   * Handles hydration issue
+   * only show after the window has finished loading
+   */
+  useEffect(() => {
+    setShowConnection(true);
+  }, []);
+
+  // Render
+  return (
+    <div className="flex flex-col items-center justify-center gap-4">
+      {sessionData
+        ? <div className='flex align-center'>
+          <li>
+              <Link rel="stylesheet" href="/me">Profile</Link>
+            </li>
+          <div className="btn-sm text-gray-200 bg-gray-900 hover:bg-gray-800 ml-3 cursor-pointer"
+            onClick={onClickSignOut as () => void}>
+            
+            <li>
+              <span>Log Out</span>
+              <svg className="w-3 h-3 fill-current text-gray-400 shrink-0 ml-2 -mr-1" viewBox="0 0 12 12" xmlns="http://www.w3.org/2000/svg">
+                <path d="M11.707 5.293L7 .586 5.586 2l3 3H0v2h8.586l-3 3L7 11.414l4.707-4.707a1 1 0 000-1.414z" fillRule="nonzero" />
+              </svg>
+            </li>
+          </div>
+        </div> 
+        : <div>
+          <div className="btn-sm text-gray-200 bg-gray-900 hover:bg-gray-800 ml-3 cursor-pointer"
+            onClick={onClickSignIn as () => void}>
+            <span>Connect Wallet</span>
+          </div>
+        </div>
+      }
+    </div>
+  );
+};

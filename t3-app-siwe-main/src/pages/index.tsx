@@ -92,7 +92,7 @@ const AuthShowcase: React.FC = () => {
 
   // Render
   return (
-    <div className="flex flex-col items-center justify-center gap-4">
+    <div className="flex flex-col items-center justify-center gap-4 bg-black">
       {sessionData
         ? <div className="mb-4 text-center">
           {sessionData ? <div className="mb-4">
@@ -176,6 +176,7 @@ const Home: NextPage = () => {
         <FeaturesBlocks />
         <Testimonials />
         <Newsletter />
+        <AuthShowcase/>
       </main>
       <Footer />
     </>

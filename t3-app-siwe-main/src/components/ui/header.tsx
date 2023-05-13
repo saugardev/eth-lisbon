@@ -115,7 +115,6 @@ const AuthShowcase: React.FC = () => {
    * Sign user out
    */
   const onClickSignOut = async () => {
-    disconnect();
     await signOut();
   };
 
@@ -132,16 +131,14 @@ const AuthShowcase: React.FC = () => {
   return (
     <div className="flex flex-col items-center justify-center gap-4">
       {sessionData
-        ? <div className='flex align-center'>
+        ? <div className='flex items-center'>
           <li>
-              <Link rel="stylesheet" href="/me">Profile</Link>
-            </li>
-          <div className="btn-sm text-gray-200 bg-gray-900 hover:bg-gray-800 ml-3 cursor-pointer"
-            onClick={onClickSignOut as () => void}>
-            
-            <li>
-              <span>Log Out</span>
-              <svg className="w-3 h-3 fill-current text-gray-400 shrink-0 ml-2 -mr-1" viewBox="0 0 12 12" xmlns="http://www.w3.org/2000/svg">
+            <Link rel="stylesheet" href="/profile">Profile</Link>
+          </li>
+          <div className="btn-sm text-gray-200 bg-gray-900 hover:bg-gray-800 ml-3 cursor-pointer">
+            <li className='flex items-center' onClick={onClickSignOut as () => void}>
+              <span>Log out</span>
+              <svg className="w-4 h-3 fill-current text-gray-400 shrink-0 ml-2 -mr-1" viewBox="0 0 12 12" xmlns="http://www.w3.org/2000/svg">
                 <path d="M11.707 5.293L7 .586 5.586 2l3 3H0v2h8.586l-3 3L7 11.414l4.707-4.707a1 1 0 000-1.414z" fillRule="nonzero" />
               </svg>
             </li>

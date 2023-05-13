@@ -84,7 +84,9 @@ const AuthShowcase: React.FC = () => {
    * Attempts SIWE and establish session
    */
   const onClickSignIn = async () => {
-    connect();
+    if (!isConnected) {
+      connect();
+    }
     try {
       const message = new SiweMessage({
         domain: window.location.host,

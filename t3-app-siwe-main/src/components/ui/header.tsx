@@ -109,7 +109,7 @@ const AuthShowcase: React.FC = () => {
     }
   };
 
-f  /**
+  /**
    * Sign user out
    */
   const onClickSignOut = async () => {
